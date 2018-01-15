@@ -17,7 +17,9 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="434,291,0,0" VerticalAlignment="Top" Width="75" Command="{Binding MyExit, Mode=OneWay}"/>
+        <Button x:Name="exitWnd" Content="Button" HorizontalAlignment="Left" Margin="434,291,0,0" VerticalAlignment="Top" Width="75" Command="{Binding MyExit, Mode=OneWay}" CommandParameter="{Binding Name, RelativeSource={RelativeSource Self}}"/>
         <TextBlock HorizontalAlignment="Right" Margin="0,10,9.667,0" TextWrapping="Wrap" Text="{Binding ClockTime, Mode=OneWay}" VerticalAlignment="Top"/>
+        <Button x:Name="openDlg" Content="Button" HorizontalAlignment="Left" Margin="93,131,0,0" VerticalAlignment="Top" Width="75" Command="{Binding MyExit, Mode=OneWay}" CommandParameter="{Binding Name, RelativeSource={RelativeSource Self}}"/>
+        <Label x:Name="label" Content="{Binding DialogResult}" HorizontalAlignment="Left" Margin="118,177,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
