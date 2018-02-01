@@ -9,12 +9,14 @@ using System.Windows.Threading;
 
 namespace WpfApp1
 {
+    enum ForSelection { NONE, No1, No2, No3, No4, No5 }
+
     class ViewModel : INotifyPropertyChanged
     {
-        public class ExitCommand : ICommand
+        public class ButtonCommand : ICommand
         {
             ViewModel viewModel;
-            public ExitCommand(ViewModel parent) { this.viewModel = parent; }
+            public ButtonCommand(ViewModel parent) { this.viewModel = parent; }
 
             public event EventHandler CanExecuteChanged;
 
@@ -34,12 +36,17 @@ namespace WpfApp1
                     case "openDlg":
                         var wnd = new Window1();
                         var result = wnd.ShowDialog();
-                        viewModel.DialogResult = result.ToString();
+                        if(result.HasValue)
+                            if(result.Value)
+                            {
+                                viewModel.SelectedValue = (ForSelection)wnd.comboBoxEnum.SelectedValue;
+                            }
+                        viewModel.DialogResult = result?.ToString();
                         break;
                 }
             }
         }
-        public ExitCommand MyExit { private set; get; }
+        public ButtonCommand MyExit { private set; get; }
 
         public class CloseViewMessenger
         {
@@ -53,19 +60,26 @@ namespace WpfApp1
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-            string dialogResult;
-            public string DialogResult
-            {
-                set { if (dialogResult != value) { dialogResult = value;PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DialogResult))); } }
-                get { return dialogResult; }
-            }
-            
+        string dialogResult;
+        public string DialogResult
+        {
+            set { if (dialogResult != value) { dialogResult = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DialogResult))); } }
+            get { return dialogResult; }
+        }
+
+        ForSelection selectedValue;
+        public ForSelection SelectedValue
+        {
+            set { if (value != selectedValue) { selectedValue = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedValue))); } }
+            get { return selectedValue; }
+        }
+
         public bool Exitable { private set; get; }
         public DateTime ClockTime { private set; get; }
         DispatcherTimer dispatcherTimer;
         public ViewModel()
         {
-            MyExit = new ExitCommand(this);
+            MyExit = new ButtonCommand(this);
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimer.Tick += DispatcherTimer_Tick;
@@ -107,7 +121,7 @@ namespace WpfApp1
             public void Execute(object parameter)
             {
                 var command = (string)parameter;
-                switch(command)
+                switch (command)
                 {
                     case "cancelCmd":
                         parent.MyMessenger.RaiseMessengerEvent(false);
