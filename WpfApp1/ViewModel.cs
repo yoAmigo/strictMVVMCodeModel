@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Collections.ObjectModel;
 
 namespace WpfApp1
 {
@@ -13,6 +14,25 @@ namespace WpfApp1
 
     class ViewModel : INotifyPropertyChanged
     {
+        public class TextEnterCommand : ICommand
+        {
+            ViewModel parent;
+            public TextEnterCommand(ViewModel parent) { this.parent = parent; }
+
+            public event EventHandler CanExecuteChanged;
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public void Execute(object parameter)
+            {
+                parent.ModelForList.Add(parameter.ToString());
+            }
+        }
+        public TextEnterCommand MyTextEnter { private set; get; }
+
         public class ButtonCommand : ICommand
         {
             ViewModel viewModel;
@@ -46,7 +66,7 @@ namespace WpfApp1
                 }
             }
         }
-        public ButtonCommand MyExit { private set; get; }
+        public ButtonCommand MyButtonCommand { private set; get; }
 
         public class CloseViewMessenger
         {
@@ -57,6 +77,8 @@ namespace WpfApp1
             }
         }
         public CloseViewMessenger MyCloseViewMessenger { private set; get; } = new CloseViewMessenger();
+
+        public ObservableCollection<string> ModelForList { set; get; } = new ObservableCollection<string>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -79,7 +101,8 @@ namespace WpfApp1
         DispatcherTimer dispatcherTimer;
         public ViewModel()
         {
-            MyExit = new ButtonCommand(this);
+            MyTextEnter = new TextEnterCommand(this);
+            MyButtonCommand = new ButtonCommand(this);
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimer.Tick += DispatcherTimer_Tick;

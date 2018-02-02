@@ -8,6 +8,14 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" ShowInTaskbar="False">
+    <Window.Resources>
+        <ItemsPanelTemplate x:Key="ItemsPanelTemplate1">
+            <DockPanel  LastChildFill="False" IsItemsHost="True" VerticalAlignment="Top"/>
+        </ItemsPanelTemplate>
+        <Style x:Key="ListBoxItemStyle1" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="DockPanel.Dock" Value="Bottom" />
+        </Style>
+    </Window.Resources>
     <Window.DataContext>
         <local:ViewModel/>
     </Window.DataContext>
@@ -17,11 +25,19 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
-        <Button x:Name="exitWnd" Content="exit" HorizontalAlignment="Left" Margin="433,285,0,0" VerticalAlignment="Top" Width="75" Command="{Binding MyExit, Mode=OneWay}" CommandParameter="{Binding Name, RelativeSource={RelativeSource Self}}"/>
+        <Button x:Name="exitWnd" Content="exit" HorizontalAlignment="Left" Margin="433,285,0,0" VerticalAlignment="Top" Width="75" Command="{Binding MyButtonCommand, Mode=OneWay}" CommandParameter="{Binding Name, RelativeSource={RelativeSource Self}}"/>
         <TextBlock HorizontalAlignment="Right" Margin="0,10,9.667,0" TextWrapping="Wrap" Text="{Binding ClockTime, Mode=OneWay}" VerticalAlignment="Top"/>
-        <Button x:Name="openDlg" Content="dialog" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Command="{Binding MyExit, Mode=OneWay}" CommandParameter="{Binding Name, RelativeSource={RelativeSource Self}}"/>
+        <Button x:Name="openDlg" Content="dialog" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Command="{Binding MyButtonCommand, Mode=OneWay}" CommandParameter="{Binding Name, RelativeSource={RelativeSource Self}}"/>
         <Label x:Name="label" Content="{Binding DialogResult}" HorizontalAlignment="Left" Margin="118,177,0,0" VerticalAlignment="Top"/>
         <Label Content="Selected" HorizontalAlignment="Left" Margin="10,39,0,0" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="74,43,0,0" TextWrapping="Wrap" Text="{Binding SelectedValue}" VerticalAlignment="Top"/>
+        <ListBox HorizontalAlignment="Left" Height="209" Margin="10,99,0,0" VerticalAlignment="Top" ItemsSource="{Binding ModelForList}" ItemsPanel="{DynamicResource ItemsPanelTemplate1}" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}"  />
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="10,71,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120">
+            <i:Interaction.Triggers>
+                <local:TextBoxTrigger >
+                    <i:InvokeCommandAction Command="{Binding MyTextEnter}" CommandParameter="{Binding Text, ElementName=textBox}"/>
+                </local:TextBoxTrigger>
+            </i:Interaction.Triggers>
+        </TextBox>
     </Grid>
 </Window>
